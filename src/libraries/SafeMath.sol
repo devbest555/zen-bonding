@@ -1,10 +1,8 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity 0.7.5;
 
-
 library SafeMath {
-
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
         require(c >= a, "SafeMath: addition overflow");
@@ -16,7 +14,11 @@ library SafeMath {
         return sub(a, b, "SafeMath: subtraction overflow");
     }
 
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b <= a, errorMessage);
         uint256 c = a - b;
 
@@ -38,7 +40,11 @@ library SafeMath {
         return div(a, b, "SafeMath: division by zero");
     }
 
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b > 0, errorMessage);
         uint256 c = a / b;
         return c;
@@ -48,18 +54,22 @@ library SafeMath {
         return mod(a, b, "SafeMath: modulo by zero");
     }
 
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b != 0, errorMessage);
         return a % b;
     }
 
-    function sqrrt(uint256 a) internal pure returns (uint c) {
+    function sqrrt(uint256 a) internal pure returns (uint256 c) {
         if (a > 3) {
             c = a;
-            uint b = add( div( a, 2), 1 );
+            uint256 b = add(div(a, 2), 1);
             while (b < c) {
                 c = b;
-                b = div( add( div( a, b ), b), 2 );
+                b = div(add(div(a, b), b), 2);
             }
         } else if (a != 0) {
             c = 1;

@@ -1,9 +1,8 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity 0.7.5;
 
 library BitMath {
-
     function mostSignificantBit(uint256 x) internal pure returns (uint8 r) {
         require(x > 0, "BitMath::mostSignificantBit: zero");
 

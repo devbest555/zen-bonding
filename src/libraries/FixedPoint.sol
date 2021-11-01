@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity 0.7.5;
 
@@ -7,7 +7,6 @@ import "../libraries/Babylonian.sol";
 import "../libraries/BitMath.sol";
 
 library FixedPoint {
-
     struct Uq112x112 {
         uint224 _x;
     }
@@ -25,9 +24,8 @@ library FixedPoint {
         return uint112(self._x >> RESOLUTION);
     }
 
-    function decode112with18(Uq112x112 memory self) internal pure returns (uint) {
-
-        return uint(self._x) / 5192296858534827;
+    function decode112with18(Uq112x112 memory self) internal pure returns (uint256) {
+        return uint256(self._x) / 5192296858534827;
     }
 
     function fraction(uint256 numerator, uint256 denominator) internal pure returns (Uq112x112 memory) {
@@ -44,7 +42,7 @@ library FixedPoint {
             return Uq112x112(uint224(result));
         }
     }
-    
+
     // square root of a Uq112x112
     // lossy between 0/1 and 40 bits
     function sqrt(Uq112x112 memory self) internal pure returns (Uq112x112 memory) {

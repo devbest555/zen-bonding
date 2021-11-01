@@ -1,18 +1,84 @@
-import 'dotenv/config';
-import {HardhatUserConfig} from 'hardhat/types';
-import 'hardhat-deploy';
-import '@nomiclabs/hardhat-ethers';
-import 'hardhat-gas-reporter';
-import '@typechain/hardhat';
-import 'solidity-coverage';
-import {node_url, accounts} from './utils/network';
+'use strict';
 
-// While waiting for hardhat PR: https://github.com/nomiclabs/hardhat/pull/1542
-if (process.env.HARDHAT_FORK) {
-  process.env['HARDHAT_DEPLOY_FORK'] = process.env.HARDHAT_FORK;
+import "dotenv/config";
+
+import { HardhatUserConfig } from "hardhat/config";
+import { NetworkUserConfig } from "hardhat/types";
+import { config as dotenvConfig } from "dotenv";
+import { resolve } from "path";
+import '@typechain/hardhat';
+import "@nomiclabs/hardhat-ethers"
+import "@nomiclabs/hardhat-waffle"
+import "hardhat-deploy"
+import "@nomiclabs/hardhat-etherscan"
+
+dotenvConfig({ path: resolve(__dirname, "./.env") });
+
+const alchemy_api_key = process.env.ALCHEMY_KEY;
+const etherScan_api_key = process.env.ETHERSCAN_API_KEY;
+const mnemonic = process.env.MNEMONIC;
+
+if (!mnemonic || !alchemy_api_key || !etherScan_api_key) {
+  throw new Error("Please set your data in a .env file");
+}
+
+const chainIds = {
+  ganache: 1337,
+  goerli: 5,
+  hardhat: 31337,
+  kovan: 42,
+  mainnet: 1,
+  rinkeby: 4,
+  ropsten: 3,
+};
+
+function nodeAlchemy(network: keyof typeof chainIds): NetworkUserConfig {
+  const url: string = "https://eth-" + network + ".alchemyapi.io/v2/" + alchemy_api_key;
+  return {
+    url: url,
+    accounts: { mnemonic },
+    chainId: chainIds[network],
+    saveDeployments: true,
+  };
 }
 
 const config: HardhatUserConfig = {
+  networks: {
+    hardhat: {
+      allowUnlimitedContractSize: true,
+      accounts: {
+        mnemonic,
+      },
+      chainId: chainIds.rinkeby,
+      saveDeployments: true,
+      forking: {
+        url: "https://eth-rinkeby.alchemyapi.io/v2/khT7j5E7O7LBI-Vf53jsKg9epwhAk2uh",
+      },
+    },
+    kovan: nodeAlchemy("kovan"),
+    rinkeby: nodeAlchemy("rinkeby"),
+    ropsten: nodeAlchemy('ropsten'),
+    mainnet: nodeAlchemy('mainnet'),
+  },
+  etherscan: {
+    apiKey: etherScan_api_key
+  },
+  paths: {
+    sources: "./src",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+    deploy: "deploy",    
+    imports: "imports",
+    deployments: "deployments"    
+  },
+  typechain: {
+    outDir: 'typechain',
+    target: 'ethers-v5',
+  },
+  namedAccounts: {
+    deployer: 0,
+  },
   solidity: {
     compilers: [
       {
@@ -26,86 +92,9 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  namedAccounts: {
-    deployer: 0,
-    simpleERC20Beneficiary: 1,
-  },
-  networks: {
-    hardhat: {
-      initialBaseFeePerGas: 0, // to fix : https://github.com/sc-forks/solidity-coverage/issues/652, see https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136
-      // process.env.HARDHAT_FORK will specify the network that the fork is made from.
-      // this line ensure the use of the corresponding accounts
-      accounts: accounts(process.env.HARDHAT_FORK),
-      forking: process.env.HARDHAT_FORK
-        ? {
-            // TODO once PR merged : network: process.env.HARDHAT_FORK,
-            url: node_url(process.env.HARDHAT_FORK),
-            blockNumber: process.env.HARDHAT_FORK_NUMBER ? parseInt(process.env.HARDHAT_FORK_NUMBER) : undefined,
-          }
-        : undefined,
-      mining: process.env.MINING_INTERVAL
-        ? {
-            auto: false,
-            interval: process.env.MINING_INTERVAL.split(',').map((v) => parseInt(v)) as [number, number],
-          }
-        : undefined,
-    },
-    localhost: {
-      url: node_url('localhost'),
-      accounts: accounts(),
-    },
-    staging: {
-      url: node_url('rinkeby'),
-      accounts: accounts('rinkeby'),
-    },
-    production: {
-      url: node_url('mainnet'),
-      accounts: accounts('mainnet'),
-    },
-    mainnet: {
-      url: node_url('mainnet'),
-      accounts: accounts('mainnet'),
-    },
-    rinkeby: {
-      url: node_url('rinkeby'),
-      accounts: accounts('rinkeby'),
-    },
-    kovan: {
-      url: node_url('kovan'),
-      accounts: accounts('kovan'),
-    },
-    goerli: {
-      url: node_url('goerli'),
-      accounts: accounts('goerli'),
-    },
-  },
-  paths: {
-    sources: 'src',
-  },
-  gasReporter: {
-    currency: 'USD',
-    gasPrice: 100,
-    enabled: process.env.REPORT_GAS ? true : false,
-    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    maxMethodDiff: 10,
-  },
-  typechain: {
-    outDir: 'typechain',
-    target: 'ethers-v5',
-  },
   mocha: {
-    timeout: 0,
-  },
-  external: process.env.HARDHAT_FORK
-    ? {
-        deployments: {
-          // process.env.HARDHAT_FORK will specify the network that the fork is made from.
-          // these lines allow it to fetch the deployments from the network being forked from both for node and deploy task
-          hardhat: ['deployments/' + process.env.HARDHAT_FORK],
-          localhost: ['deployments/' + process.env.HARDHAT_FORK],
-        },
-      }
-    : undefined,
+    timeout: 200e3
+  },  
 };
 
 export default config;

@@ -1,0 +1,32 @@
+"FactoryStorage" at 0xDa7De5D3aE7e236D03A8E54a372C52e13dC597fe 
+function : createBondAndTreasury
+payoutToken: 0x50e7615a526f715556c478749303c75571f1e6b5 //USDT in kovan
+principleToken: 0x5cBbA5484594598a660636eFb0A1AD953aFa4e32 // new MockToken
+initialOwner: 0xb10bcC8B508174c761CFB1E7143bFE37c4fBC3a1 //our metamask wallet
+tierCeilings: []
+fees: []
+dao: "0x1A621BBd762a52b01c3eF070D3317c8589c37915",//dao multisig address(for now vaultLib as test)
+treasury: "0xb10bcC8B508174c761CFB1E7143bFE37c4fBC3a1",//our dao wallet(for now my wallet as test)
+
+"SubsidyRouter" at 0x8Cb9dA2E5f102B0B0B3371c0E1F1b87709389bEa 
+"Factory" at 0x2a30E123Ac0Ee64219D5d370B23338d348553d3B 
+"MockToken" at 0xd490cd0A7F2DA67420f4133546e2eEbB6198a701 
+
+"CustomTreasury" at 0xb2d9D1BE1fD95a8589885D9998cc9D9d32FAD525
+module.exports = [
+  "0x50e7615a526f715556c478749303c75571f1e6b5",
+  "0xb10bcC8B508174c761CFB1E7143bFE37c4fBC3a1"
+];
+
+"CustomBond" at 0xb2d9D1BE1fD95a8589885D9998cc9D9d32FAD525
+module.exports = [
+  "0x120BeB0d8A320d53C3C1c8A87efA329E44F31D04", 
+  "0x50e7615a526f715556c478749303c75571f1e6b5",
+  "0x5cBbA5484594598a660636eFb0A1AD953aFa4e32",
+  "0xb10bcC8B508174c761CFB1E7143bFE37c4fBC3a1",
+  "0x8cb9da2e5f102b0b0b3371c0e1f1b87709389bea",
+  "0xb10bcC8B508174c761CFB1E7143bFE37c4fBC3a1",
+  "0x1A621BBd762a52b01c3eF070D3317c8589c37915",
+  [],
+  []
+];

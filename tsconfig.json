@@ -14,5 +14,6 @@
     "./deploy",
     "./test",
     "typechain/**/*"
-  ]
+  ],
+  "exclude": ["node_modules/"]
 }

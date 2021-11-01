@@ -9,19 +9,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   } = hre;
 
   const deployer = (await getSigners())[0]; 
-  const factoryStorage = await get('FactoryStorage');
-  const subsidyRouter = await get('SubsidyRouter');
-  const helper = await get('Helper');
-  const mockToken = await get('MockToken');
-
-  await deploy('Factory', {
+        
+  await deploy('Helper', {
     from: deployer.address,
     args: [
-      config.treasury, 
-      factoryStorage.address, 
-      subsidyRouter.address, 
-      config.dao,
-      helper.address
+      config.uniswap.factory,
+      config.uniswap.router, 
+      config.sushiswapRinkeby.factory,
+      config.sushiswapRinkeby.router
     ],
     log: true,    
     skipIfAlreadyDeployed: true,
@@ -29,8 +24,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 
-func.id = 'deploy_factory'; // id required to prevent reexecution
-func.tags = ['Factory'];
-func.dependencies = ['FactoryStorage', 'SubsidyRouter', 'Helper', 'MockToken'];
+func.id = 'deploy_helper'; // id required to prevent reexecution
+func.tags = ['Helper'];
 
 export default func;
